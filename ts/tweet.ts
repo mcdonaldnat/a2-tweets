@@ -17,7 +17,7 @@ class Tweet {
         else if (tweetText.includes("completed") || tweetText.includes("posted")){ // Just completed/posted ...
             return "completed_event";
         }
-        else if (tweetText.startsWith("watch my run")){ // Watch my run right now ...
+        else if (tweetText.includes("right now")){ // Watch my run/walk right now ...
             return "live_event";
         }
         else if (tweetText.startsWith("achieved")){ // Achieved a ...
@@ -30,7 +30,9 @@ class Tweet {
 
     //returns a boolean, whether the text includes any content written by the person tweeting.
     get written():boolean {
-        //TODO: identify whether the tweet is written
+        if (this.text.includes(" - ")){
+            return true;
+        }
         return false;
     }
 
@@ -38,24 +40,73 @@ class Tweet {
         if(!this.written) {
             return "";
         }
-        //TODO: parse the written text from the tweet
-        return "";
+        
+        var start_index = this.text.indexOf(" - "); 
+        var end_index = this.text.indexOf("http");
+
+        return this.text.substring(start_index + 2, end_index);
     }
 
+    // All acitvities: walk, run, bike, swim, yoga, actvity, hike, pilates session, skate, 
+    // workout (crossfit, stairmaster/stepwell, strength, elliptical, core)
+    // Acitvities possibly returned: walk, run, bike, other
     get activityType():string {
         if (this.source != 'completed_event') {
             return "unknown";
         }
-        //TODO: parse the activity type from the text of the tweet
-        return "";
+
+        var use_text = this.text.toLowerCase();
+
+        // if it's user-written, strip the written part of the tweet in case it messes with the activity type
+        if (this.written){
+            var end_index = this.text.indexOf(" - ");
+            use_text = this.text.substring(0, end_index);
+        }
+
+        if (use_text.includes(" run ")){
+            return "run";
+        }
+        else if (use_text.includes(" walk ")){
+            return "walk";
+        }
+        else if (use_text.includes(" bike ")){
+            return "bike";
+        }
+        else{
+            return "other";
+        }
     }
 
     get distance():number {
         if(this.source != 'completed_event') {
             return 0;
         }
-        //TODO: prase the distance from the text of the tweet
-        return 0;
+
+        var use_text = this.text.toLowerCase();
+
+        // if it's user-written, strip the written part of the tweet in case it messes with the activity type
+        if (this.written){
+            var end_index = this.text.indexOf(" - ");
+            use_text = this.text.substring(0, end_index);
+        }
+
+        var distance_str = "";
+        var distance_mi = 0;
+
+        // check if the text includes a distance unit (km or mi)
+        if (use_text.includes(" km ")){
+            var start_index = use_text.indexOf("ed a ") // Just completed/posted a #.## mi/km run/walk/bike
+            var end_index = use_text.indexOf(" km ");
+            distance_str = use_text.substring(start_index + 5, end_index)
+            distance_mi = parseFloat(distance_str) * 1.609;
+        }
+        else if (use_text.includes(" mi ")){
+            var start_index = use_text.indexOf("ed a ") // Just completed/posted a #.## mi/km run/walk/bike
+            var end_index = use_text.indexOf(" mi ");
+            distance_str = use_text.substring(start_index + 5, end_index)
+            distance_mi = parseFloat(distance_str)
+        }
+        return distance_mi;
     }
 
     getHTMLTableRow(rowNumber:number):string {

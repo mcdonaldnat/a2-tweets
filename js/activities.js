@@ -9,6 +9,12 @@ function parseTweets(runkeeper_tweets) {
 		return new Tweet(tweet.text, tweet.created_at);
 	});
 
+	// update the activity information sections
+	document.getElementById('numberActivities').innerText = 4; // walk, run, bike, other
+	document.getElementById('firstMost').innerText = getMostActivity(1, tweet_array);
+	document.getElementById('secondMost').innerText = 4;
+	document.getElementById('thirdMost').innerText = 4;
+
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
 
 	activity_vis_spec = {
@@ -23,6 +29,98 @@ function parseTweets(runkeeper_tweets) {
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.
+}
+
+//---- PART 2.1: Determining activity type and distance ----
+
+// get the most acitvity by rank (1 - first, 2 - second, 3 - third)
+function getMostActivity(rank, total_array){
+	var completed_tweets = getCategoryArray('completed_event', total_array)
+
+	var W_count = 0; // walk
+	var R_count = 0; // run
+	var B_count = 0; // bike
+	var other_count = 0; // other
+
+	for (var i = 0; i < completed_tweets.length; i++){
+		var tweet_type = completed_tweets[i].activityType;
+		if (tweet_type == "walk"){
+			W_count += 1;
+		}
+		else if (tweet_type == "run"){
+			R_count += 1;
+		}
+		else if (tweet_type == "bike"){
+			B_count += 1;
+		}
+		else if (tweet_type == "other"){
+			other_count += 1;
+		}
+	}
+
+	const map = new Map();
+	map.set("walk", W_count);
+	map.set("run", R_count);
+	map.set("bike", B_count);
+	map.set("other", other_count);
+
+	var W_map = {
+		type: "walk",
+		count: W_count
+	};
+
+	var R_map = {
+		type: "run",
+		count: R_count
+	};
+
+	var B_map = {
+		type: "bike",
+		count: B_count
+	};
+
+	var other_map = {
+		type: "other",
+		count: other_count
+	};
+	
+	var counts_array = [];
+	counts_array.push(map.get("walk"));
+	counts_array.push(map.get("run"));
+	counts_array.push(map.get("bike"));
+	counts_array.push(map.get("other"));
+	var counts_sorted = counts_array.sort(); 
+
+	// return based on rank specified
+	if (rank == 1){
+		return counts_sorted[0];
+	}
+	else if (rank == 2){
+		return counts_sorted[1];
+	}
+	else if (rank == 3){
+		return counts_sorted[2];
+	}
+	else{
+		return "ERROR";
+	}
+
+
+}
+
+// returns an array of all tweets in a category by category_name
+function getCategoryArray(category_name, tweet_array){
+	var category_array = [];
+	var total_count = tweet_array.length;
+
+	for (var i = 0; i < total_count; i++){
+		var tw = tweet_array[i].source;
+		if (tw.toLowerCase() == category_name.toLowerCase()){
+			category_array.push(tweet_array[i]);
+		}
+	}
+
+	return category_array;
 }
 
 //Wait for the DOM to load

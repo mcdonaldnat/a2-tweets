@@ -16,12 +16,19 @@ function parseTweets(runkeeper_tweets) {
 	document.getElementById('firstDate').innerText = findEarlistTweet(tweet_array);
 	document.getElementById('lastDate').innerText = findLatestTweet(tweet_array);
 	//update percentage values
-	document.getElementsByClass('completedEventsPct').innerText = 1;
-	document.getElementsByClass('liveEventsPct').innerText = 2;
-	document.getElementsByClass('achievementsPct').innerText = 3;
-	document.getElementsByClass('miscellaneousPct').innerText = 4;
-
-
+	updateDocumentInnerText("completedEventsPct", calculateCategoryPercentage("completed_event", tweet_array) + "%");
+	updateDocumentInnerText("liveEventsPct", calculateCategoryPercentage("live_event", tweet_array) + "%");
+	updateDocumentInnerText("achievementsPct", calculateCategoryPercentage("achievement", tweet_array) + "%");
+	updateDocumentInnerText("miscellaneousPct", calculateCategoryPercentage("miscellaneous", tweet_array) + "%");
+	// update count values
+	updateDocumentInnerText("completedEvents", getCategoryCount("completed_event", tweet_array));
+	updateDocumentInnerText("liveEvents", getCategoryCount("live_event", tweet_array));
+	updateDocumentInnerText("achievements", getCategoryCount("achievement", tweet_array));
+	updateDocumentInnerText("miscellaneous", getCategoryCount("miscellaneous", tweet_array));
+	// update written and writtenPCT
+	updateDocumentInnerText("written", getCountByWritten(tweet_array, true));
+	var written_pct = (getCountByWritten(tweet_array, true) / getCategoryCount("completed_event", tweet_array)) * 100; 
+	updateDocumentInnerText("writtenPct", math.format(written_pct, 2) + "%");
 }
 
 //---- PART 1.1: Tweet Dates ----
@@ -69,8 +76,85 @@ function findLatestTweet(tweet_array){
 
 //---- PART 1.2: Tweet Categories ----
 
-function updateDocumentPercentages(class_name){
-	
+// sets the .innerText to the text_to_set (str/int) for each element in the HTML class by class_name (str)
+function updateDocumentInnerText(class_name, text_to_set){
+	var elements = document.getElementsByClassName(class_name);
+	for (var i = 0; i < elements.length; i++){
+		elements[i].innerText = text_to_set;
+	}
+}
+
+
+// gets the count of all tweets in a certain category using category_name
+function getCategoryCount(category_name, total_array){
+	var category_count = 0;
+	var total_count = total_array.length;
+
+	for (var i = 0; i < total_count; i++){
+		var tw = total_array[i].source;
+		if (tw.toLowerCase() == category_name.toLowerCase()){
+			category_count += 1; 
+		}
+	}
+
+	return category_count;
+}
+
+
+// calculates the percentage of the tweet category in the total_tweet_array
+function calculateCategoryPercentage(category_name, total_tweet_array){
+	var category_count = getCategoryCount(category_name, total_tweet_array);
+	var total_count = total_tweet_array.length;
+
+	// format the result to 2 decimal points
+	var percent = (category_count/total_count) * 100;
+	return math.format(percent, 2);
+}
+
+
+//---- PART 1.3: User-Written Tweets ----
+
+
+// returns an array of all tweets in a category by category_name
+function getCategoryArray(category_name, tweet_array){
+	var category_array = [];
+	var total_count = tweet_array.length;
+
+	for (var i = 0; i < total_count; i++){
+		var tw = tweet_array[i].source;
+		if (tw.toLowerCase() == category_name.toLowerCase()){
+			category_array.push(tweet_array[i]);
+		}
+	}
+
+	return category_array;
+}
+
+
+// returns the count of the completed_events based on the boolean written (true if user-written, false if not)
+function getCountByWritten(tweet_array, written){
+	var completed_tweets = getCategoryArray('completed_event', tweet_array);
+	console.log(completed_tweets.length);
+	var user_written = 0;
+	var not_written = 0;
+
+	for (var i = 0; i < completed_tweets.length; i++){
+		var tw = completed_tweets[i];
+		if (tw.written){
+			user_written += 1;
+		}
+		else if (!tw.written){
+			not_written += 1;
+		}
+	}
+
+	if (written){
+		return user_written;
+	}
+	else {
+		return not_written;
+	}
+
 }
 
 
