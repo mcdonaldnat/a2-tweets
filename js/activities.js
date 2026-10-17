@@ -10,10 +10,12 @@ function parseTweets(runkeeper_tweets) {
 	});
 
 	// update the activity information sections
-	document.getElementById('numberActivities').innerText = 4; // walk, run, bike, other
-	document.getElementById('firstMost').innerText = getMostActivity(1, tweet_array);
+	document.getElementById('numberActivities').innerText = getAllActivityTypes(tweet_array); // 16
+	//document.getElementById('firstMost').innerText = getMostActivity(1, tweet_array);
 	document.getElementById('secondMost').innerText = 4;
 	document.getElementById('thirdMost').innerText = 4;
+
+	getAllActivityTypes(tweet_array);
 
 	//TODO: create a new array or manipulate tweet_array to create a graph of the number of tweets containing each type of activity.
 
@@ -57,32 +59,6 @@ function getMostActivity(rank, total_array){
 			other_count += 1;
 		}
 	}
-
-	const map = new Map();
-	map.set("walk", W_count);
-	map.set("run", R_count);
-	map.set("bike", B_count);
-	map.set("other", other_count);
-
-	var W_map = {
-		type: "walk",
-		count: W_count
-	};
-
-	var R_map = {
-		type: "run",
-		count: R_count
-	};
-
-	var B_map = {
-		type: "bike",
-		count: B_count
-	};
-
-	var other_map = {
-		type: "other",
-		count: other_count
-	};
 	
 	var counts_array = [];
 	counts_array.push(map.get("walk"));
@@ -121,6 +97,18 @@ function getCategoryArray(category_name, tweet_array){
 	}
 
 	return category_array;
+}
+
+// return the number of activity types in the whole tweet array
+function getAllActivityTypes(tweet_array){
+	var type_array = new Set();
+	for (var i = 0; i < tweet_array.length; i++){
+		type_array.add(tweet_array[i].activityType);
+	}
+
+	//type_array.forEach(v => console.log(v));
+	//console.log(type_array.size);
+	return type_array.size;
 }
 
 //Wait for the DOM to load

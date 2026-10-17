@@ -49,7 +49,7 @@ class Tweet {
 
     // All acitvities: walk, run, bike, swim, yoga, actvity, hike, pilates session, skate, 
     // workout (crossfit, stairmaster/stepwell, strength, elliptical, core)
-    // Acitvities possibly returned: walk, run, bike, other
+    // Acitvities possibly returned: walk, run, bike, workout, other
     get activityType():string {
         if (this.source != 'completed_event') {
             return "unknown";
@@ -62,6 +62,36 @@ class Tweet {
             var end_index = this.text.indexOf(" - ");
             use_text = this.text.substring(0, end_index);
         }
+
+        // distance measurement
+        if (!(use_text.includes(" km ") || use_text.includes(" mi "))){
+            return "unknown"; // exit if we can't find either
+        }
+
+        // returns the word in between "km/mi" and "-/with @Runkeeper"
+        var start_index = -1;
+        var end_index = -1;
+
+        if (use_text.includes(" km ")){
+            start_index = use_text.indexOf(" km ") + 4;
+        }
+        else if (use_text.includes(" mi ")){
+            start_index = use_text.indexOf(" mi ") + 4; 
+        }
+
+        if (use_text.includes(" - ")){
+            end_index = use_text.indexOf(" - ");
+        }
+        else if (use_text.includes(" with @")){
+            end_index = use_text.indexOf(" with @"); 
+        }
+
+        if (end_index == -1){
+            return "unknown";
+        }
+
+        return use_text.substring(start_index, end_index);
+
 
         if (use_text.includes(" run ")){
             return "run";
@@ -76,6 +106,7 @@ class Tweet {
             return "other";
         }
     }
+
 
     get distance():number {
         if(this.source != 'completed_event') {
