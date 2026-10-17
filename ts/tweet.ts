@@ -91,20 +91,6 @@ class Tweet {
         }
 
         return use_text.substring(start_index, end_index);
-
-
-        if (use_text.includes(" run ")){
-            return "run";
-        }
-        else if (use_text.includes(" walk ")){
-            return "walk";
-        }
-        else if (use_text.includes(" bike ")){
-            return "bike";
-        }
-        else{
-            return "other";
-        }
     }
 
 
