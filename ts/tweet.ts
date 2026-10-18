@@ -123,7 +123,20 @@ class Tweet {
             distance_str = use_text.substring(start_index + 5, end_index)
             distance_mi = parseFloat(distance_str)
         }
+        if (distance_mi > 1000){
+            console.log(this.text);
+        }
         return distance_mi;
+    }
+
+    // returns the day of the week as a string ("Mon, Tue", etc.)
+    get dayOfWeek():string{
+        // use what we wrote in about.js
+        const options:Intl.DateTimeFormatOptions = {
+            weekday: "short"
+        };
+
+        return this.time.toLocaleDateString("en-US", options); 
     }
 
     getHTMLTableRow(rowNumber:number):string {

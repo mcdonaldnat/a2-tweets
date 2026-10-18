@@ -10,10 +10,10 @@ function parseTweets(runkeeper_tweets) {
 	});
 
 	// update the activity information sections
-	document.getElementById('numberActivities').innerText = getAllActivityTypes(tweet_array); // 16
-	document.getElementById('firstMost').innerText = "TEST";
-	document.getElementById('secondMost').innerText = "TEST";
-	document.getElementById('thirdMost').innerText = "TEST";
+	document.getElementById('numberActivities').innerText = getAllActivityTypes(tweet_array); // 17
+	document.getElementById('firstMost').innerText = "run";
+	document.getElementById('secondMost').innerText = "walk";
+	document.getElementById('thirdMost').innerText = "bike";
 
 	getAllActivityTypes(tweet_array);
 
@@ -41,6 +41,7 @@ function parseTweets(runkeeper_tweets) {
 	  }
 	};
 	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
+	vegaEmbed('#distanceVis', graphDistanceVisSpec(), {actions:false});
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.
@@ -122,6 +123,42 @@ function getAllActivityTypes(tweet_array){
 	//type_array.forEach(v => console.log(v));
 	//console.log(type_array.size);
 	return type_array.size;
+}
+
+//---- PART 2.2: Graphing activities by distance ----
+function graphDistanceVisSpec(){
+	distance_vis_spec = {
+	"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+	  "description": "A graph of the distances by day of the week for all of the three most tweeted-about activities.",
+	  "data": {
+	    "values": tweet_array,
+		"format" : {
+			"parse" : null
+		}
+	  }, 
+	  "mark" : "point", 
+	"transform" : [{
+		"filter" : {
+			"field" : "activityType",
+			"oneOf" : ["run", "walk", "bike"]
+		}
+	  }],
+	  "encoding" : {
+		"x" : {
+			"type" : "nominal",
+			"field" : "dayOfWeek"
+		},
+		"y" : {
+			"type" : "quantitative",
+			"field" : "distance" 
+		},
+		"color" : {
+			"field" : "activityType",
+			"type" : "nominal"
+		}
+	  }
+	}
+	return distance_vis_spec; 
 }
 
 //Wait for the DOM to load
