@@ -9,10 +9,10 @@ class Tweet {
 
 	//returns either 'live_event', 'achievement', 'completed_event', or 'miscellaneous'
     get source():string {
-        var tweetText = this.text.toLowerCase();
+        var tweetText = this.text;
 
         if (this.text == null){
-            return "miscellaneous"; // ASK IN SLACK what to return on error
+            return "unknown"; // ASK IN SLACK what to return on error
         }
         else if (tweetText.includes("completed") || tweetText.includes("posted")){ // Just completed/posted ...
             return "completed_event";
@@ -20,7 +20,7 @@ class Tweet {
         else if (tweetText.includes("right now")){ // Watch my run/walk right now ...
             return "live_event";
         }
-        else if (tweetText.startsWith("achieved")){ // Achieved a ...
+        else if (tweetText.startsWith("Achieved")){ // Achieved a ...
             return "achievement";
         }
         else{
@@ -60,7 +60,7 @@ class Tweet {
         // if it's user-written, strip the written part of the tweet in case it messes with the activity type
         if (this.written){
             var end_index = this.text.indexOf(" - ");
-            use_text = this.text.substring(0, end_index);
+            use_text = this.text.substring(0, end_index + 3);
         }
 
         // distance measurement
@@ -69,28 +69,28 @@ class Tweet {
         }
 
         // returns the word in between "km/mi" and "-/with @Runkeeper"
-        var start_index = -1;
-        var end_index = -1;
+        var start_index = 0;
+        var end_index = 0;
 
         if (use_text.includes(" km ")){
-            start_index = use_text.indexOf(" km ") + 4;
+            start_index = use_text.indexOf(" km ");
         }
         else if (use_text.includes(" mi ")){
-            start_index = use_text.indexOf(" mi ") + 4; 
+            start_index = use_text.indexOf(" mi "); 
         }
 
         if (use_text.includes(" - ")){
             end_index = use_text.indexOf(" - ");
         }
-        else if (use_text.includes(" with @")){
-            end_index = use_text.indexOf(" with @"); 
+        else if (use_text.includes(" with ")){
+            end_index = use_text.indexOf(" with "); 
         }
 
-        if (end_index == -1){
+        if (start_index > end_index){
             return "unknown";
         }
 
-        return use_text.substring(start_index, end_index);
+        return use_text.substring(start_index + 4, end_index);
     }
 
 

@@ -32,7 +32,7 @@ function parseTweets(runkeeper_tweets) {
 	  "encoding" : {
 		"x" : {
 			"type" : "nominal",
-			"feild" : "activityType"
+			"field" : "activityType"
 		},
 		"y" : {
 			"type" : "quantitative",
