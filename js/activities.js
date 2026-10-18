@@ -11,9 +11,9 @@ function parseTweets(runkeeper_tweets) {
 
 	// update the activity information sections
 	document.getElementById('numberActivities').innerText = getAllActivityTypes(tweet_array); // 16
-	//document.getElementById('firstMost').innerText = getMostActivity(1, tweet_array);
-	document.getElementById('secondMost').innerText = 4;
-	document.getElementById('thirdMost').innerText = 4;
+	document.getElementById('firstMost').innerText = "TEST";
+	document.getElementById('secondMost').innerText = "TEST";
+	document.getElementById('thirdMost').innerText = "TEST";
 
 	getAllActivityTypes(tweet_array);
 
@@ -23,9 +23,22 @@ function parseTweets(runkeeper_tweets) {
 	  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
 	  "description": "A graph of the number of Tweets containing each type of activity.",
 	  "data": {
-	    "values": tweet_array
+	    "values": tweet_array,
+		"format" : {
+			"parse" : null
+		}
+	  }, 
+	  "mark" : "bar", 
+	  "encoding" : {
+		"x" : {
+			"type" : "nominal",
+			"feild" : "activityType"
+		},
+		"y" : {
+			"type" : "quantitative",
+			"aggregate" : "count" 
+		}
 	  }
-	  //TODO: Add mark and encoding
 	};
 	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 
