@@ -42,6 +42,7 @@ function parseTweets(runkeeper_tweets) {
 	};
 	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 	vegaEmbed('#distanceVis', graphDistanceVisSpec(), {actions:false});
+	vegaEmbed('#distanceVisAggregated', graphAggregatedDistanceVisSpec(), {actions:false});
 
 	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
 	//Use those visualizations to answer the questions about which activities tended to be longest and when.
@@ -159,6 +160,42 @@ function graphDistanceVisSpec(){
 	  }
 	}
 	return distance_vis_spec; 
+}
+
+function graphAggregatedDistanceVisSpec(){
+	agg_distance_vis_spec = {
+	"$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+	  "description": "A graph of the distances by day of the week for all of the three most tweeted-about activities.",
+	  "data": {
+	    "values": tweet_array,
+		"format" : {
+			"parse" : null
+		}
+	  }, 
+	  "mark" : "point", 
+	"transform" : [{
+		"filter" : {
+			"field" : "activityType",
+			"oneOf" : ["run", "walk", "bike"]
+		}
+	  }],
+	  "encoding" : {
+		"x" : {
+			"type" : "nominal",
+			"field" : "dayOfWeek"
+		},
+		"y" : {
+			"type" : "quantitative",
+			"field" : "distance",
+			"aggregate" : "mean" 
+		},
+		"color" : {
+			"field" : "activityType",
+			"type" : "nominal"
+		}
+	  }
+	}
+	return agg_distance_vis_spec; 
 }
 
 //Wait for the DOM to load
