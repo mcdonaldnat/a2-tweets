@@ -40,64 +40,39 @@ function parseTweets(runkeeper_tweets) {
 		}
 	  }
 	};
+
+	document.getElementById("longestActivityType").innerText = "bike";
+	document.getElementById("shortestActivityType").innerText = "walk";
+	document.getElementById("weekdayOrWeekendLonger").innerText = "Sunday";
+
+
 	vegaEmbed('#activityVis', activity_vis_spec, {actions:false});
 	vegaEmbed('#distanceVis', graphDistanceVisSpec(), {actions:false});
-	vegaEmbed('#distanceVisAggregated', graphAggregatedDistanceVisSpec(), {actions:false});
-
-	//TODO: create the visualizations which group the three most-tweeted activities by the day of the week.
-	//Use those visualizations to answer the questions about which activities tended to be longest and when.
+	//vegaEmbed('#distanceVisAggregated', graphAggregatedDistanceVisSpec(), {actions:false});
+	
+	var agg_button = document.getElementById("aggregate");
+	var agg_graph = false;
+	agg_button.addEventListener("click", function(){
+		if (agg_graph){
+			// show the non-aggregated one
+			vegaEmbed('#distanceVis', graphDistanceVisSpec(), {actions:false});
+			vegaEmbed('#distanceVisAggregated', {}, {actions:false});
+			agg_graph = false;
+			agg_button.textContent = "Show Means";
+			console.log("Showing regular graph...");
+		}
+		else{
+			// show the mean-aggregated graph
+			vegaEmbed('#distanceVisAggregated', graphAggregatedDistanceVisSpec(), {actions:false});
+			vegaEmbed('#distanceVis', {}, {actions:false});
+			agg_graph = true;
+			agg_button.textContent = "Show all Activities";
+			console.log("Showing mean aggregated graph...");
+		}
+	})
 }
 
 //---- PART 2.1: Determining activity type and distance ----
-
-// get the most acitvity by rank (1 - first, 2 - second, 3 - third)
-function getMostActivity(rank, total_array){
-	var completed_tweets = getCategoryArray('completed_event', total_array)
-
-	var W_count = 0; // walk
-	var R_count = 0; // run
-	var B_count = 0; // bike
-	var other_count = 0; // other
-
-	for (var i = 0; i < completed_tweets.length; i++){
-		var tweet_type = completed_tweets[i].activityType;
-		if (tweet_type == "walk"){
-			W_count += 1;
-		}
-		else if (tweet_type == "run"){
-			R_count += 1;
-		}
-		else if (tweet_type == "bike"){
-			B_count += 1;
-		}
-		else if (tweet_type == "other"){
-			other_count += 1;
-		}
-	}
-	
-	var counts_array = [];
-	counts_array.push(map.get("walk"));
-	counts_array.push(map.get("run"));
-	counts_array.push(map.get("bike"));
-	counts_array.push(map.get("other"));
-	var counts_sorted = counts_array.sort(); 
-
-	// return based on rank specified
-	if (rank == 1){
-		return counts_sorted[0];
-	}
-	else if (rank == 2){
-		return counts_sorted[1];
-	}
-	else if (rank == 3){
-		return counts_sorted[2];
-	}
-	else{
-		return "ERROR";
-	}
-
-
-}
 
 // returns an array of all tweets in a category by category_name
 function getCategoryArray(category_name, tweet_array){
