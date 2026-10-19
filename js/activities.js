@@ -69,7 +69,7 @@ function parseTweets(runkeeper_tweets) {
 			agg_button.textContent = "Show all Activities";
 			console.log("Showing mean aggregated graph...");
 		}
-	})
+	});
 }
 
 //---- PART 2.1: Determining activity type and distance ----
@@ -121,8 +121,9 @@ function graphDistanceVisSpec(){
 	  }],
 	  "encoding" : {
 		"x" : {
-			"type" : "nominal",
+			"type" : "ordinal",
 			"field" : "dayOfWeek"
+			//"sort": ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"]
 		},
 		"y" : {
 			"type" : "quantitative",
@@ -156,7 +157,7 @@ function graphAggregatedDistanceVisSpec(){
 	  }],
 	  "encoding" : {
 		"x" : {
-			"type" : "nominal",
+			"type" : "ordinal",
 			"field" : "dayOfWeek"
 		},
 		"y" : {
