@@ -124,7 +124,7 @@ class Tweet {
             distance_mi = parseFloat(distance_str)
         }
         if (distance_mi > 1000){
-            console.log(this.text);
+            //console.log(this.text);
         }
         return distance_mi;
     }
@@ -141,6 +141,6 @@ class Tweet {
 
     getHTMLTableRow(rowNumber:number):string {
         //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-        return "<tr></tr>";
+        return `<td>${rowNumber}</td><td>${this.activityType}</td><td>${this.text}</td>`;
     }
 }

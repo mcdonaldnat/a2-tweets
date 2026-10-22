@@ -1,3 +1,5 @@
+var writtenTweets = [];
+
 function parseTweets(runkeeper_tweets) {
 	//Do not proceed if no tweets loaded
 	if(runkeeper_tweets === undefined) {
@@ -6,7 +8,12 @@ function parseTweets(runkeeper_tweets) {
 	}
 
 	//TODO: Filter to just the written tweets
-	// collect into global var
+	runkeeper_tweets.forEach(tw =>{
+		var newTweet = new Tweet(tw.text, tw.created_at);
+		if (newTweet.written){
+			writtenTweets.push(newTweet);
+		}
+	});
 }
 
 function addEventHandlerForSearch() {
@@ -15,11 +22,27 @@ function addEventHandlerForSearch() {
 	const searchBar = document.getElementById("textFilter");
 
 	searchBar.addEventListener("input", function(event){
-		// search is event.target.value
-		// filter the tweets using the written tweets and search
-		// .includes(search)
-		// display the results in the table
-		// update the text
+		var search = event.target.value;
+		var filteredTws = [];
+
+		writtenTweets.forEach(tw => {
+			if (tw.text.includes(search)){
+				filteredTws.push(tw);
+			}
+		});
+
+		// .getElementsByTagName('tbody')[0]
+
+		var DOMtable = document.getElementsByClassName("table")[0];
+
+		// filteredTws.length
+		for (var i = 1; i <= 20; i++){
+			var newRow = DOMtable.insertRow();
+			newRow.innerHTML = filteredTws[i].getHTMLTableRow(i);
+		}
+
+		console.log(filteredTws.length);
+		console.log(filteredTws.slice(0, 20));
 	})
 }
 
