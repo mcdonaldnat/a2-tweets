@@ -139,8 +139,21 @@ class Tweet {
         return this.time.toLocaleDateString("en-US", options); 
     }
 
+    // parse and return just the link portion from the text
+    get textLink():string{
+        var start_index = this.text.indexOf("https:");
+        var end_index = this.text.indexOf("#Run");
+
+        return this.text.substring(start_index, end_index);
+    }
+
     getHTMLTableRow(rowNumber:number):string {
+        var link = this.textLink;
+        var end_index = this.text.indexOf("https:");
+        var last_index = this.text.indexOf("#Run");
+
+
         //TODO: return a table row which summarizes the tweet with a clickable link to the RunKeeper activity
-        return `<td>${rowNumber}</td><td>${this.activityType}</td><td>${this.text}</td>`;
+        return `<td>${rowNumber}</td><td>${this.activityType}</td><td>${this.text.substring(0, end_index)}<a href = ${link}>${link}</a>${this.text.substring(last_index)}</td>`;
     }
 }

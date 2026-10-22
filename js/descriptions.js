@@ -25,25 +25,31 @@ function addEventHandlerForSearch() {
 		var search = event.target.value;
 		var filteredTws = [];
 
+		// if the search is empty and we already have rows in the table, delete them
+		var DOMtable = document.getElementsByClassName("table")[0];
+		var rowCount = DOMtable.rows.length;
+		if (rowCount >= 2){
+			for (var i = rowCount - 1; i >= 1; i--){
+					DOMtable.deleteRow(i);
+			}
+			//console.log("ALL ROWS DELETED");
+		}
+
+		// get the tweets that match the user's search
 		writtenTweets.forEach(tw => {
 			if (tw.text.includes(search)){
 				filteredTws.push(tw);
 			}
 		});
 
-		// .getElementsByTagName('tbody')[0]
-
-		var DOMtable = document.getElementsByClassName("table")[0];
-
-		// filteredTws.length
-		for (var i = 1; i <= 20; i++){
-			var newRow = DOMtable.insertRow();
-			newRow.innerHTML = filteredTws[i].getHTMLTableRow(i);
+		// update the DOM table if the search is not empty
+		if (search != ""){
+			for (var i = 1; i <= filteredTws.length; i++){
+				var newRow = DOMtable.insertRow(-1);
+				newRow.innerHTML = filteredTws[i].getHTMLTableRow(i);
+			}
 		}
-
-		console.log(filteredTws.length);
-		console.log(filteredTws.slice(0, 20));
-	})
+	});
 }
 
 //Wait for the DOM to load
