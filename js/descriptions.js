@@ -14,6 +14,10 @@ function parseTweets(runkeeper_tweets) {
 			writtenTweets.push(newTweet);
 		}
 	});
+
+	// update the page text
+	document.getElementById("searchText").innerText = ""; 
+	document.getElementById("searchCount").innerText = "";
 }
 
 function addEventHandlerForSearch() {
@@ -24,6 +28,9 @@ function addEventHandlerForSearch() {
 	searchBar.addEventListener("input", function(event){
 		var search = event.target.value;
 		var filteredTws = [];
+
+		// update the page text
+		document.getElementById("searchText").innerText = search; 
 
 		// if the search is empty and we already have rows in the table, delete them
 		var DOMtable = document.getElementsByClassName("table")[0];
@@ -41,6 +48,10 @@ function addEventHandlerForSearch() {
 				filteredTws.push(tw);
 			}
 		});
+
+		// update the page text with the count
+		document.getElementById("searchCount").innerText = filteredTws.length - 1; 
+		//console.log(filteredTws.length);
 
 		// update the DOM table if the search is not empty
 		if (search != ""){
